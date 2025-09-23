@@ -1,0 +1,38 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env
+
+# Database files
+chroma_db/
+*.db
+*.sqlite3
+/data
+*.xlsx
+*.csv
+*.parquet
+
+# IDE and OS specific files
+.idea/
+.vscode/
+*.DS_Store
+
+# Logs and temporary files
+logs/
+*.log
+tmp/
+temp/
+*.tmp
+
+# Ignore specific files
+.coverage
+.pytest_cache/
+.python-version
+
