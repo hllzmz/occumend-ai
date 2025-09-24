@@ -25,16 +25,19 @@ def create_app(config_class=Config):
 
         # Initialize service clients
         try:
-            if not app.config["OPEN_ROUTER_API_KEY"]:
+            try:
+                if not app.config["OPEN_ROUTER_API_KEY"]:
+                    app.llm_client = None
+                    print("Warning: OPEN_ROUTER_API_KEY is not set.")
+                else:
+                    print(f"DEBUG: Attempting to initialize LLM client with key length: {len(app.config['OPEN_ROUTER_API_KEY'])}")
+                    app.llm_client = openai.OpenAI(
+                        base_url="https://openrouter.ai/api/v1",
+                        api_key=app.config["OPEN_ROUTER_API_KEY"],
+                    )
+            except Exception as e:
                 app.llm_client = None
-                print(
-                    "Warning: OPEN_ROUTER_API_KEY is not set. Chat feature will not work."
-                )
-            else:
-                app.llm_client = openai.OpenAI(
-                    base_url="https://openrouter.ai/api/v1",
-                    api_key=app.config["OPEN_ROUTER_API_KEY"],
-                )
+                print(f"CRITICAL LLM ERROR: Failed to initialize OpenAI client: {e}")
 
             connections.connect(uri=str(app.config["MILVUS_DB_PATH"]))
 
