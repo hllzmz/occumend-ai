@@ -3,7 +3,7 @@ import json
 import re
 import pathlib
 
-# File paths (relative to project root, not script location)
+# File paths
 PROJECT_ROOT = pathlib.Path(__file__).parents[1].resolve()
 DATA_DIR = PROJECT_ROOT / "data"
 

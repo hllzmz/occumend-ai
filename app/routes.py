@@ -68,7 +68,8 @@ def chat():
             onet_collection=current_app.onet_collection,
             user_question=user_question,
             profile_summary=profile_summary,
-            model=current_app.config['LLM_CHAT_MODEL']
+            model=current_app.config['LLM_CHAT_MODEL'],
+            embedding_model=current_app.embedding_model,
         )
         return jsonify({"answer": answer})
     except ValueError as e:

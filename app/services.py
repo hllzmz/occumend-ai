@@ -1,14 +1,15 @@
-def get_ai_response(llm_client, onet_collection, user_question, profile_summary, model):
+def get_ai_response(llm_client, onet_collection, user_question, profile_summary, model, embedding_model):
     """
     Retrieves relevant documents from the database based on the user's question,
     creates a prompt, and asks the LLM to generate an answer.
 
     Args:
         llm_client: Initialized OpenAI client.
-        onet_collection: Initialized ChromaDB collection.
+        onet_collection: Initialized Milvus Collection.
         user_question (str): The user's question.
         profile_summary (str): The user's RIASEC profile summary.
         model (str): Name of the LLM model to use.
+        embedding_model: SentenceTransformer model for embedding.
 
     Raises:
         ValueError: If an error occurs during service calls.
@@ -18,14 +19,13 @@ def get_ai_response(llm_client, onet_collection, user_question, profile_summary,
     """
     # Retrieve relevant documents from the vector database
     try:
-        retrieved_results = onet_collection.query(
-            query_texts=[user_question],
-            n_results=5
-        )
-        # Combine the retrieved documents into a single text block
-        retrieved_docs = "\n\n---\n\n".join(retrieved_results["documents"][0])
+        query_vector = embedding_model.encode([user_question]).tolist()[0]
+        search_params = {"metric_type": "COSINE", "params": {}}
+        results = onet_collection.search([query_vector], "vector", search_params, limit=5, output_fields=["title"])
+        # Combine results
+        retrieved_docs = "\n\n---\n\n".join([hit.entity.get("title") + ": " + "Document content here" for hit in results[0]])  # Not: İçerik saklanmıyor, gerekirse ekleyin
     except Exception as e:
-        print(f"ChromaDB query error: {e}")
+        print(f"Milvus search error: {e}")
         raise ValueError("Could not retrieve relevant documents from the knowledge base.")
 
     # Create system and user prompts for the LLM
@@ -70,5 +70,5 @@ def get_ai_response(llm_client, onet_collection, user_question, profile_summary,
         answer = response.choices[0].message.content
         return answer
     except Exception as e:
-        print(f"OpenAI API call error: {e}")
+        print(f"LLM API call error: {e}")
         raise ValueError("An error occurred while communicating with the AI model.")

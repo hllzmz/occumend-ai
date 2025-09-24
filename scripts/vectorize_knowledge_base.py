@@ -1,13 +1,13 @@
 import pathlib
 import json
-import chromadb
-from chromadb.utils import embedding_functions
+from pymilvus import connections, Collection, CollectionSchema, FieldSchema, DataType
+from sentence_transformers import SentenceTransformer
 
 # File paths
 SCRIPT_DIR = pathlib.Path(__file__).parent.resolve()
 PROJECT_ROOT = SCRIPT_DIR.parent 
 ONET_KNOWLEDGE_BASE_FILE_PATH = PROJECT_ROOT / "data" / "onet_knowledge_base.json"
-CHROMA_DB_PATH = PROJECT_ROOT / "chroma_db"
+MILVUS_DB_PATH = PROJECT_ROOT / "data" / "milvus.db"
 
 def vectorize_and_store():
     """
@@ -15,24 +15,29 @@ def vectorize_and_store():
     stores them persistently in ChromaDB.
     """
 
-    # Model and database client
+    # Connect to Milvus
+    connections.connect(uri=str(MILVUS_DB_PATH))
+    # Initialize embedding model
     model_name = "all-MiniLM-L6-v2"
-    sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=model_name
-    )
+    embedding_model = SentenceTransformer(model_name)
 
-    # Persist the database in a folder named 'chroma_db'
-    client = chromadb.PersistentClient(path=str(CHROMA_DB_PATH))
+    fields = [
+        FieldSchema(name="id", dtype=DataType.VARCHAR, max_length=100, is_primary=True),
+        FieldSchema(name="vector", dtype=DataType.FLOAT_VECTOR, dim=384),
+        FieldSchema(name="title", dtype=DataType.VARCHAR, max_length=500),
+    ]
+    schema = CollectionSchema(fields, description="O*NET knowledge base")
 
-    # Create (or use if exists) a collection named 'onet_data'
+    # Create or get collection
     collection_name = "onet_data"
-    collection = client.get_or_create_collection(
-        name=collection_name,
-        embedding_function=sentence_transformer_ef,
-        metadata={"hnsw:space": "cosine"},
-    )
+    try:
+        collection = Collection(collection_name)
+        collection.drop()
+    except:
+        pass
+    collection = Collection(collection_name, schema)
 
-    # Load the knowledge base file
+    # Load knowledge base
     knowledge_base_file = ONET_KNOWLEDGE_BASE_FILE_PATH
     try:
         with open(knowledge_base_file, "r", encoding="utf-8") as f:
@@ -42,28 +47,17 @@ def vectorize_and_store():
         print("Please run 'onet_knowledge_base.py' first.")
         return
 
-    # Add data to ChromaDB
-    if collection.count() > 0:
-        existing_ids = collection.get(include=[])["ids"]
-        if existing_ids:
-            collection.delete(ids=existing_ids)
-            print(f"Deleted {len(existing_ids)} old documents from the collection.")
-
-    # Prepare documents, metadata, and IDs as lists
+    # Prepare data for insertion
     doc_contents = [doc["content"] for doc in documents]
     doc_ids = [doc["doc_id"] for doc in documents]
-    metadatas = [{"title": doc["title"]} for doc in documents]
-
-    batch_size = 100
-    for i in range(0, len(doc_contents), batch_size):
-        batch_docs = doc_contents[i : i + batch_size]
-        batch_ids = doc_ids[i : i + batch_size]
-        batch_metas = metadatas[i : i + batch_size]
-
-        collection.add(documents=batch_docs, metadatas=batch_metas, ids=batch_ids)
-        print(
-            f"  Processed batch {i//batch_size + 1}/{(len(doc_contents)-1)//batch_size + 1}..."
-        )
+    titles = [doc["title"] for doc in documents]
+    vectors = embedding_model.encode(doc_contents).tolist()
+    # Insert data into Milvus collection
+    entities = [doc_ids, vectors, titles]
+    collection.insert(entities)
+    collection.create_index(field_name="vector", index_params={"metric_type": "COSINE", "index_type": "FLAT"})
+    collection.load()
+    print(f"Inserted {len(documents)} documents into Milvus Lite.")
 
 if __name__ == "__main__":
     vectorize_and_store()

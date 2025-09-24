@@ -2,8 +2,8 @@ from flask import Flask
 from .config import Config
 from .data_processing import load_and_prepare_data
 import openai
-import chromadb
-from chromadb.utils import embedding_functions
+from pymilvus import connections, Collection, CollectionSchema
+from sentence_transformers import SentenceTransformer
 
 
 def create_app(config_class=Config):
@@ -36,18 +36,17 @@ def create_app(config_class=Config):
                     api_key=app.config["OPEN_ROUTER_API_KEY"],
                 )
 
-            chroma_client = chromadb.PersistentClient(
-                path=str(app.config["CHROMA_DB_PATH"])
-            )
-            sentence_transformer_ef = (
-                embedding_functions.SentenceTransformerEmbeddingFunction(
-                    model_name=app.config["EMBEDDING_MODEL_NAME"]
-                )
-            )
-            app.onet_collection = chroma_client.get_collection(
-                name=app.config["ONET_COLLECTION_NAME"],
-                embedding_function=sentence_transformer_ef,
-            )
+            connections.connect(uri=str(app.config["MILVUS_DB_PATH"]))
+
+            app.embedding_model = SentenceTransformer(app.config["EMBEDDING_MODEL_NAME"])
+
+            try:
+                app.onet_collection = Collection(app.config["ONET_COLLECTION_NAME"])
+                app.onet_collection.load()
+            except Exception:
+                print(f"Warning: Collection '{app.config['ONET_COLLECTION_NAME']}' not found. Run vectorize script.")
+                app.onet_collection = None
+                
         except Exception as e:
             print(f"Error: RAG components could not be initialized: {e}")
             app.llm_client = None

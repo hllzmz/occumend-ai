@@ -18,11 +18,13 @@ class Config:
     # Model Settings
     LLM_CHAT_MODEL = "openai/gpt-oss-20b:free"
     #LLM_CHAT_MODEL = "gpt-4o"
+
+    # Embedding model for vector db
     EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 
     # Data and chromadb directories 
     DATA_PATH = BASE_DIR / "data"
-    CHROMA_DB_PATH = BASE_DIR / "chroma_db"
+    MILVUS_DB_PATH = BASE_DIR / "data" / "milvus.db"
 
     ONET_COLLECTION_NAME = "onet_data"
 
