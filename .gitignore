@@ -11,12 +11,11 @@ env/
 .env
 
 # Database files
-*.db
-*.sqlite3
-/data
+#*.db
+#/data
 *.xlsx
 *.csv
-*.parquet
+#*.parquet
 
 # IDE and OS specific files
 .idea/
