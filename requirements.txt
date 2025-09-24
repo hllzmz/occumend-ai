@@ -74,7 +74,7 @@ pybase64==1.4.2
 pydantic==2.11.9
 pydantic_core==2.33.2
 Pygments==2.19.2
-pymilvus==2.6.2
+pymilvus[milvus_lite]==2.6.2
 pyparsing==3.2.5
 PyPika==0.48.9
 pyproject_hooks==1.2.0
