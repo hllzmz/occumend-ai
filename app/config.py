@@ -20,7 +20,7 @@ class Config:
     #LLM_CHAT_MODEL = "gpt-4o"
 
     # Embedding model for vector db
-    EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+    EMBEDDING_MODEL_NAME = "models/all-MiniLM-L6-v2"
 
     # Data and chromadb directories 
     DATA_PATH = BASE_DIR / "data"
