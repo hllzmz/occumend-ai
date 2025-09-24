@@ -52,8 +52,10 @@ def recommend():
 
 @bp.route("/chat", methods=["POST"])
 def chat():
-    if not current_app.llm_client or not current_app.onet_collection:
-        return jsonify({"error": "Chat feature is not configured on the server."}), 500
+    if not current_app.llm_client:
+        return jsonify({"error": "LLM client is not configured on the server."}), 500
+    if not current_app.onet_collection:
+        return jsonify({"error": "ONET collection is not configured on the server."}), 500
 
     data = request.json
     user_question = data.get("question")
