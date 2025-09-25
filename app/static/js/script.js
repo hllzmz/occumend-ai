@@ -15,7 +15,7 @@ let userAnswers = {}; // Store all answers
 
 // --- 2. DOM ELEMENTS ---
 // DOM elements will be assigned after the DOM is loaded.
-let surveyBody, backBtn, nextBtn, progressBar, validationMsg, formContainer, resultsContainer, chatForm, chatInput, chatMessages, loaderContainer;
+let surveyBody, backBtn, nextBtn, progressBar, validationMsg, formContainer, resultsContainer, chatForm, chatInput, chatMessages, loaderContainer, scrollToTopBtn;
 
 let userProfileSummary = '';
 let recommendationsData = [];
@@ -109,10 +109,23 @@ async function goToBack() {
 
 function fadeTransition(updateFunction, ...args) {
     return new Promise(resolve => {
+        // Disable buttons during transition
+        nextBtn.disabled = true;
+        backBtn.disabled = true;
+
         formContainer.classList.add('fade-out');
         setTimeout(() => {
             updateFunction(...args);
+            // Focus the first input of the new step for accessibility
+            const firstInput = surveyBody.querySelector('input[type="radio"]');
+            if (firstInput) {
+                firstInput.focus();
+            }
             formContainer.classList.remove('fade-out');
+            
+            // Re-enable buttons after transition
+            nextBtn.disabled = false;
+            backBtn.disabled = false;
             resolve();
         }, 400);
     });
@@ -180,7 +193,7 @@ function renderResults(data, answersForBackend) {
                 </div>
             </div>
             <div class="chart-block">
-                <h3>Top Job Matches (Similarity %)</h3>
+                <h3>Top Job Matches</h3>
                 <div class="chart-wrapper">
                     <img src="${data.chart_images.bar}" alt="Top Job Matches Bar Chart">
                 </div>
@@ -269,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chatForm = document.getElementById('chat-form');
     chatInput = document.getElementById('chat-input');
     chatMessages = document.getElementById('chat-messages');
+    scrollToTopBtn = document.getElementById('scroll-to-top');
 
     // Survey navigation events
     nextBtn.addEventListener('click', goToNext);
@@ -362,6 +376,19 @@ document.addEventListener('DOMContentLoaded', () => {
             typingIndicator.remove();
             addChatMessage('I seem to be having trouble connecting. Please try again later.', 'bot-message');
         }
+    });
+
+    // Scroll to Top button logic
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) { // Show button after scrolling 300px
+            scrollToTopBtn.style.display = 'block';
+        } else {
+            scrollToTopBtn.style.display = 'none';
+        }
+    });
+
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     // --- Initial Load ---

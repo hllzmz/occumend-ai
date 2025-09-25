@@ -261,6 +261,7 @@ button:disabled {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
+
 .results-table th {
     background-color: #f8f9fa;
 }
@@ -301,6 +302,7 @@ button:disabled {
     padding-bottom: 0;
 }
 
+
 .details-content h4 {
     margin-top: 0;
     border-bottom: 1px solid #ced4da;
@@ -326,27 +328,13 @@ button:disabled {
     display: table-row;
 }
 
+
 #chat-container {
     margin-top: 50px;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     border: 1px solid #dee2e6;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* Animation for new chat messages */
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 #chat-header {
@@ -374,13 +362,25 @@ button:disabled {
     gap: 12px;
 }
 
+/* Animation for new chat messages */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .chat-message {
     padding: 10px 16px;
     border-radius: 20px;
     max-width: 85%;
     line-height: 1.5;
     word-wrap: break-word;
-    animation: slideInUp 0.4s ease-out;
+    animation: slideInUp 0.4s ease-out; /* Apply animation */
 }
 
 .user-message {
@@ -483,6 +483,22 @@ button:disabled {
     100% { transform: rotate(360deg); }
 }
 
+/* Scroll to Top Button */
+#scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 50px;
+    text-align: center;
+    padding: 0;
+    z-index: 100;
+}
+
 
 /* --- Responsive Design --- */
 @media (max-width: 992px) {
@@ -533,9 +549,9 @@ button:disabled {
         gap: 30px;
     }
 
-    .chart-wrapper {
-        max-width: 100%;
-        min-width: initial;
+    .chart-block {
+        max-width: 95%; /* Adjust max-width for better fit */
+        min-width: initial; /* Remove min-width */
     }
 
     .results-table thead {
@@ -554,29 +570,34 @@ button:disabled {
         padding: 10px;
     }
 
+    /* Remove grid layout from the row */
     .results-table .result-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-gap: 10px;
+        display: block;
     }
 
     .results-table td {
-        border: none;
-        padding: 5px 0;
-        display: flex;
+        display: flex; /* Use flexbox for alignment */
+        justify-content: space-between; /* Label on left, value on right */
         align-items: center;
-        justify-content: space-between;
+        padding: 10px 5px; /* Adjust padding */
+        border: none;
+        border-bottom: 1px solid #e9ecef; /* Separator line */
+    }
+
+    .results-table tr td:last-child {
+        border-bottom: none; /* Remove line from last item */
     }
     
     .results-table td[data-label="Details"] {
-        grid-column: 1 / -1;
-        justify-content: center;
+        justify-content: center; /* Center the details button */
+        padding-top: 15px;
     }
 
     .results-table td::before {
         content: attr(data-label);
         font-weight: bold;
         margin-right: 10px;
+        flex-shrink: 0; /* Prevent label from shrinking */
     }
 
     .results-table td[data-label="Details"]::before {
