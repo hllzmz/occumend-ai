@@ -173,7 +173,7 @@ async function submitAndShowResults() {
 }
 
 function renderResults(data, answersForBackend) {
-    recommendationsData = data.recommendations;
+    recommendationsData = data.recommendations || [];
 
     const riasecScores = {};
     for (const cat in answersForBackend) {
@@ -200,6 +200,7 @@ function renderResults(data, answersForBackend) {
             </div>
         </div>
     `;
+
     resultsHtml += '<h3>Recommendations List</h3><table class="results-table"><thead><tr><th>Occupation</th><th>Career Cluster</th><th>Similarity</th><th>Details</th></tr></thead><tbody>';
     recommendationsData.forEach((rec, index) => {
         const similarityPercentage = (rec.similarity * 100).toFixed(2);
@@ -208,18 +209,20 @@ function renderResults(data, answersForBackend) {
                 <td data-label="Occupation">${rec.Title}</td>
                 <td data-label="Career Cluster">${rec.cluster_name}</td>
                 <td data-label="Similarity">
-                    <div class="similarity-bar-container">
-                        <div class="similarity-bar" style="width: ${similarityPercentage}%;"></div>
-                        <span>${similarityPercentage}%</span>
+                    <div class="similarity-row">
+                        <div class="similarity-bar-container" title="Similarity: ${similarityPercentage}%">
+                            <div class="similarity-bar" style="width: ${similarityPercentage}%;"></div>
+                        </div>
+                        <div class="similarity-percentage">${similarityPercentage}%</div>
                     </div>
                 </td>
                 <td data-label="Details"><button class="details-btn" data-row-index="${index}">Details</button></td>
             </tr>
             <tr id="details-row-${index}" class="details-row hidden"><td colspan="4">
                 <div class="details-content">
-                    <div><h4>Top 5 Required Knowledge</h4><ul>${rec.knowledge.map(item => `<li>${item}</li>`).join('') || '<li>N/A</li>'}</ul></div>
-                    <div><h4>Top 5 Required Skills</h4><ul>${rec.skills.map(item => `<li>${item}</li>`).join('') || '<li>N/A</li>'}</ul></div>
-                    <div><h4>Top 5 Required Abilities</h4><ul>${rec.abilities.map(item => `<li>${item}</li>`).join('') || '<li>N/A</li>'}</ul></div>
+                    <div><h4>Top 5 Required Knowledge</h4><ul>${rec.knowledge && rec.knowledge.length ? rec.knowledge.map(item => `<li>${item}</li>`).join('') : '<li>N/A</li>'}</ul></div>
+                    <div><h4>Top 5 Required Skills</h4><ul>${rec.skills && rec.skills.length ? rec.skills.map(item => `<li>${item}</li>`).join('') : '<li>N/A</li>'}</ul></div>
+                    <div><h4>Top 5 Required Abilities</h4><ul>${rec.abilities && rec.abilities.length ? rec.abilities.map(item => `<li>${item}</li>`).join('') : '<li>N/A</li>'}</ul></div>
                 </div>
             </td></tr>`;
     });
@@ -227,12 +230,14 @@ function renderResults(data, answersForBackend) {
 
     // Hide loader and show results
     const loaderContainer = document.querySelector('.loader-container');
-    if(loaderContainer) loaderContainer.classList.add('hidden');
-    
+    if (loaderContainer) loaderContainer.classList.add('hidden');
+
     resultsContainer.innerHTML = resultsHtml;
     const chatContainer = document.getElementById('chat-container');
-    chatContainer.style.display = 'block'; // Make it visible
-    chatContainer.classList.remove('hidden');
+    if (chatContainer) {
+        chatContainer.style.display = 'block'; // Make it visible
+        chatContainer.classList.remove('hidden');
+    }
     addChatMessage("Hello! I'm your AI career advisor OccumendAI. Feel free to ask me anything about your results or the recommended jobs.", "bot-message");
     renderSuggestedQuestions();
 }
@@ -282,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
     chatForm = document.getElementById('chat-form');
     chatInput = document.getElementById('chat-input');
     chatMessages = document.getElementById('chat-messages');
-    scrollToTopBtn = document.getElementById('scroll-to-top');
 
     // Survey navigation events
     nextBtn.addEventListener('click', goToNext);
@@ -376,19 +380,6 @@ document.addEventListener('DOMContentLoaded', () => {
             typingIndicator.remove();
             addChatMessage('I seem to be having trouble connecting. Please try again later.', 'bot-message');
         }
-    });
-
-    // Scroll to Top button logic
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) { // Show button after scrolling 300px
-            scrollToTopBtn.style.display = 'block';
-        } else {
-            scrollToTopBtn.style.display = 'none';
-        }
-    });
-
-    scrollToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     // --- Initial Load ---

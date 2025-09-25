@@ -261,13 +261,17 @@ button:disabled {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
+.similarity-percentage {
+    display: none;
+}
+
 
 .results-table th {
     background-color: #f8f9fa;
 }
 
 .details-btn {
-    background-color: #007bff; /* Consistent secondary button color */
+    background-color: #6c757d; /* Consistent secondary button color */
     color: white;
     font-size: 12px;
     padding: 5px 10px;
@@ -276,7 +280,7 @@ button:disabled {
 }
 
 .details-btn:hover {
-    background-color: #0056b3; /* Consistent hover color */
+    background-color: #5a6268; /* Consistent hover color */
 }
 
 .details-row > td {
@@ -483,22 +487,6 @@ button:disabled {
     100% { transform: rotate(360deg); }
 }
 
-/* Scroll to Top Button */
-#scroll-to-top {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 24px;
-    line-height: 50px;
-    text-align: center;
-    padding: 0;
-    z-index: 100;
-}
-
 
 /* --- Responsive Design --- */
 @media (max-width: 992px) {
@@ -533,15 +521,20 @@ button:disabled {
 
     .survey-options {
         width: 100%;
-        justify-content: space-around;
+        justify-content: space-between; /* Better alignment */
+        flex-wrap: wrap; /* Allow options to wrap */
+        gap: 10px; /* Reduce gap */
     }
 
     .survey-option {
-        min-width: 55px;
+        min-width: 0; /* Remove min-width to allow natural flex sizing */
+        flex-basis: 0; /* Allow items to shrink and grow properly */
+        flex-grow: 1;
     }
 
     .survey-option .option-label {
         font-size: 11px;
+        word-break: break-word;
     }
 
     .charts-container {
@@ -550,14 +543,13 @@ button:disabled {
     }
 
     .chart-block {
-        max-width: 95%; /* Adjust max-width for better fit */
-        min-width: initial; /* Remove min-width */
+        max-width: 100%; /* Allow charts to take full width */
     }
 
     .results-table thead {
         display: none;
     }
-
+    
     .results-table, .results-table tbody, .results-table tr, .results-table td {
         display: block;
         width: 100%;
@@ -568,36 +560,74 @@ button:disabled {
         border: 1px solid #dee2e6;
         border-radius: 5px;
         padding: 10px;
+        box-sizing: border-box; /* Ensure padding is included in width */
     }
 
-    /* Remove grid layout from the row */
     .results-table .result-row {
         display: block;
     }
 
     .results-table td {
-        display: flex; /* Use flexbox for alignment */
-        justify-content: space-between; /* Label on left, value on right */
-        align-items: center;
-        padding: 10px 5px; /* Adjust padding */
+        display: block; /* Change back to block for natural flow */
+        padding: 10px 5px;
         border: none;
-        border-bottom: 1px solid #e9ecef; /* Separator line */
+        border-bottom: 1px solid #e9ecef;
+        text-align: left; /* Align text to the left */
+    }
+
+    .results-table td[data-label="Occupation"],
+    .results-table td[data-label="Career Cluster"] {
+        text-align: right; /* Keep the actual text content to the right */
     }
 
     .results-table tr td:last-child {
-        border-bottom: none; /* Remove line from last item */
+        border-bottom: none;
     }
     
     .results-table td[data-label="Details"] {
-        justify-content: center; /* Center the details button */
+        text-align: center; /* Center the details button */
         padding-top: 15px;
     }
 
     .results-table td::before {
         content: attr(data-label);
         font-weight: bold;
-        margin-right: 10px;
-        flex-shrink: 0; /* Prevent label from shrinking */
+        text-align: left;
+        display: block; /* Make label take its own line */
+        margin-bottom: 5px; /* Add space below label */
+    }
+
+    .results-table td[data-label="Similarity"] {
+        text-align: left; /* Override right alignment for this cell */
+    }
+
+    .results-table td[data-label="Similarity"]::before {
+        margin-bottom: 8px; /* More space for the bar */
+    }
+
+    .results-table td[data-label="Similarity"] .similarity-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%; /* Ensure it takes full width of the td */
+    }
+
+    .results-table td[data-label="Similarity"] .similarity-bar-container {
+        flex: 1 1 auto;
+        width: auto;
+    }
+
+    .results-table td[data-label="Similarity"] .similarity-percentage {
+        display: inline-block;
+        flex: 0 0 55px;
+        width: 55px;
+        text-align: right;
+        line-height: 24px;
+        font-weight: bold;
+    }
+
+    .similarity-bar-container span {
+        display: none;
     }
 
     .results-table td[data-label="Details"]::before {
@@ -612,5 +642,14 @@ button:disabled {
 
     .details-content {
         flex-direction: column;
+    }
+
+    #chat-container {
+        margin-top: 30px;
+        /* The chat will be part of the normal page flow */
+    }
+
+    #chat-messages {
+        max-height: 45vh; /* Reduce max height on mobile */
     }
 }
