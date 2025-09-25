@@ -9,12 +9,13 @@ const questions = [
 ];
 
 const steps = ['R', 'I', 'A', 'S', 'E', 'C'];
+const optionLabels = ['Dislike', 'Slightly Dislike', 'Neutral', 'Slightly Enjoy', 'Enjoy'];
 let currentStep = 0;
 let userAnswers = {}; // Store all answers
 
 // --- 2. DOM ELEMENTS ---
 // DOM elements will be assigned after the DOM is loaded.
-let surveyBody, backBtn, nextBtn, progressBar, validationMsg, formContainer, resultsContainer, chatForm, chatInput, chatMessages;
+let surveyBody, backBtn, nextBtn, progressBar, validationMsg, formContainer, resultsContainer, chatForm, chatInput, chatMessages, loaderContainer;
 
 let userProfileSummary = '';
 let recommendationsData = [];
@@ -28,17 +29,29 @@ function renderStep(stepIndex) {
     surveyBody.innerHTML = '';
     stepQuestions.forEach(q => {
         const qIndex = questions.indexOf(q);
-        const row = document.createElement('tr');
-        row.className = `cat-${q.cat.toLowerCase()}`;
-        row.id = `q-row-${qIndex}`;
+        const card = document.createElement('div');
+        card.className = `survey-question-card cat-${q.cat.toLowerCase()}`;
+        card.id = `q-card-${qIndex}`;
 
-        let rowHTML = `<td>${q.text}</td>`;
+        let optionsHTML = '';
         for (let i = 1; i <= 5; i++) {
-            const isChecked = userAnswers[qIndex] === i.toString() ? 'checked' : '';
-            rowHTML += `<td><input type="radio" name="q${qIndex}" value="${i}" data-q-index="${qIndex}" ${isChecked}></td>`;
+            const isChecked = userAnswers[qIndex] === i.toString();
+            const isSelected = isChecked ? 'selected' : '';
+            optionsHTML += `
+                <label class="survey-option ${isSelected}">
+                    <input type="radio" name="q${qIndex}" value="${i}" data-q-index="${qIndex}" ${isChecked ? 'checked' : ''}>
+                    <span class="option-label">${optionLabels[i-1]}</span>
+                </label>
+            `;
         }
-        row.innerHTML = rowHTML;
-        surveyBody.appendChild(row);
+
+        card.innerHTML = `
+            <p class="question-text">${q.text}</p>
+            <div class="survey-options">
+                ${optionsHTML}
+            </div>
+        `;
+        surveyBody.appendChild(card);
     });
     updateUI();
 }
@@ -59,12 +72,12 @@ function validateStep() {
 
     currentQuestions.forEach(q => {
         const qIndex = questions.indexOf(q);
-        const row = document.getElementById(`q-row-${qIndex}`);
-        row.classList.remove('question-error');
+        const card = document.getElementById(`q-card-${qIndex}`);
+        card.classList.remove('question-error');
 
         if (!userAnswers[qIndex]) {
             allAnswered = false;
-            row.classList.add('question-error');
+            card.classList.add('question-error');
         }
     });
 
@@ -80,6 +93,7 @@ async function goToNext() {
     if (currentStep < steps.length - 1) {
         currentStep++;
         await fadeTransition(renderStep, currentStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
         await submitAndShowResults();
     }
@@ -89,6 +103,7 @@ async function goToBack() {
     if (currentStep > 0) {
         currentStep--;
         await fadeTransition(renderStep, currentStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
@@ -105,12 +120,13 @@ function fadeTransition(updateFunction, ...args) {
 
 async function submitAndShowResults() {
     nextBtn.disabled = true;
-    nextBtn.textContent = "Calculating...";
+    backBtn.disabled = true;
 
     formContainer.classList.add('fade-out');
     setTimeout(() => {
         formContainer.style.display = 'none';
-        resultsContainer.innerHTML = '<h2>Calculating Results...</h2>';
+        loaderContainer = document.querySelector('.loader-container');
+        if(loaderContainer) loaderContainer.classList.remove('hidden');
         resultsContainer.classList.add('visible');
     }, 400);
 
@@ -137,6 +153,7 @@ async function submitAndShowResults() {
         renderResults(data, answersForBackend);
 
     } catch (error) {
+        if(loaderContainer) loaderContainer.classList.add('hidden');
         resultsContainer.innerHTML = '<h2>An error occurred. Please try again.</h2>';
         console.error('Detailed Error:', error);
     }
@@ -156,24 +173,34 @@ function renderResults(data, answersForBackend) {
     let resultsHtml = '<h2>Your Results</h2>';
     resultsHtml += `
         <div class="charts-container">
-            <div class="chart-wrapper">
+            <div class="chart-block">
                 <h3>Your Interest Profile</h3>
-                <img src="${data.chart_images.radar}" alt="Your Interest Profile Radar Chart">
+                <div class="chart-wrapper">
+                    <img src="${data.chart_images.radar}" alt="Your Interest Profile Radar Chart">
+                </div>
             </div>
-            <div class="chart-wrapper">
-                <h3>Top Job Matches</h3>
-                <img src="${data.chart_images.bar}" alt="Top Job Matches Bar Chart">
+            <div class="chart-block">
+                <h3>Top Job Matches (Similarity %)</h3>
+                <div class="chart-wrapper">
+                    <img src="${data.chart_images.bar}" alt="Top Job Matches Bar Chart">
+                </div>
             </div>
         </div>
     `;
     resultsHtml += '<h3>Recommendations List</h3><table class="results-table"><thead><tr><th>Occupation</th><th>Career Cluster</th><th>Similarity</th><th>Details</th></tr></thead><tbody>';
     recommendationsData.forEach((rec, index) => {
+        const similarityPercentage = (rec.similarity * 100).toFixed(2);
         resultsHtml += `
             <tr class="result-row">
-                <td>${rec.Title}</td>
-                <td>${rec.cluster_name}</td>
-                <td>${(rec.similarity * 100).toFixed(2)}%</td>
-                <td><button class="details-btn" data-row-index="${index}">Details</button></td>
+                <td data-label="Occupation">${rec.Title}</td>
+                <td data-label="Career Cluster">${rec.cluster_name}</td>
+                <td data-label="Similarity">
+                    <div class="similarity-bar-container">
+                        <div class="similarity-bar" style="width: ${similarityPercentage}%;"></div>
+                        <span>${similarityPercentage}%</span>
+                    </div>
+                </td>
+                <td data-label="Details"><button class="details-btn" data-row-index="${index}">Details</button></td>
             </tr>
             <tr id="details-row-${index}" class="details-row hidden"><td colspan="4">
                 <div class="details-content">
@@ -185,10 +212,35 @@ function renderResults(data, answersForBackend) {
     });
     resultsHtml += '</tbody></table>';
 
+    // Hide loader and show results
+    const loaderContainer = document.querySelector('.loader-container');
+    if(loaderContainer) loaderContainer.classList.add('hidden');
+    
     resultsContainer.innerHTML = resultsHtml;
-    document.getElementById('chat-container').classList.remove('hidden');
+    const chatContainer = document.getElementById('chat-container');
+    chatContainer.style.display = 'block'; // Make it visible
+    chatContainer.classList.remove('hidden');
     addChatMessage("Hello! I'm your AI career advisor OccumendAI. Feel free to ask me anything about your results or the recommended jobs.", "bot-message");
+    renderSuggestedQuestions();
 }
+
+function renderSuggestedQuestions() {
+    const container = document.getElementById('suggested-questions-container');
+    container.innerHTML = ''; // Clear previous suggestions
+    const suggestions = [
+        "What are the daily tasks for a " + recommendationsData[0].Title + "?",
+        "Which of these jobs has the best work-life balance?",
+        "Compare the required education for the top 3 jobs."
+    ];
+
+    suggestions.forEach(q => {
+        const btn = document.createElement('button');
+        btn.className = 'suggested-question';
+        btn.textContent = q;
+        container.appendChild(btn);
+    });
+}
+
 
 function addChatMessage(message, className) {
     const messageElement = document.createElement('div');
@@ -227,9 +279,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target.type === 'radio') {
             const qIndex = event.target.getAttribute('data-q-index');
             userAnswers[qIndex] = event.target.value;
-            const row = document.getElementById(`q-row-${qIndex}`);
-            if (row.classList.contains('question-error')) {
-                row.classList.remove('question-error');
+
+            // Visual feedback for selection
+            const currentCard = document.getElementById(`q-card-${qIndex}`);
+            // Remove 'selected' from all options in the same card
+            currentCard.querySelectorAll('.survey-option').forEach(opt => opt.classList.remove('selected'));
+            // Add 'selected' to the parent label of the checked radio
+            event.target.closest('.survey-option').classList.add('selected');
+
+            if (currentCard.classList.contains('question-error')) {
+                currentCard.classList.remove('question-error');
                 if (document.querySelectorAll('.question-error').length === 0) {
                     validationMsg.style.visibility = 'hidden';
                 }
@@ -248,12 +307,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Event listener for suggested questions
+    document.getElementById('suggested-questions-container').addEventListener('click', event => {
+        if (event.target.classList.contains('suggested-question')) {
+            const questionText = event.target.textContent;
+            chatInput.value = questionText;
+            chatInput.style.height = 'auto';
+            chatInput.style.height = (chatInput.scrollHeight) + 'px';
+            chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+    });
+
     document.getElementById('riasec-form').addEventListener('submit', e => e.preventDefault());
 
     // Chat events
     chatInput.addEventListener('input', function () {
         this.style.height = 'auto';
         this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    chatInput.addEventListener('keydown', function(event) {
+        // Check if Enter is pressed without the Shift key
+        if (event.key === 'Enter' && !event.shiftKey) {
+            // Prevent default action (which is to add a new line)
+            event.preventDefault();
+            // Trigger the form's submit event
+            chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+        // If Shift + Enter is pressed, the default browser behavior (adding a new line) will execute.
     });
 
     chatForm.addEventListener('submit', async function (event) {

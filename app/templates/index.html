@@ -13,28 +13,17 @@
 
 <body>
 
-    <h1>Career Interest Survey</h1>
+    <h1>Discover Your Career Interests</h1>
 
     <div id="riasec-form-container" class="form-container">
         <div id="progress-bar-container">
             <div id="progress-bar"></div>
         </div>
         <form id="riasec-form" novalidate>
-            <table class="survey-table">
-                <thead>
-                    <tr>
-                        <th>Activity</th>
-                        <th>Dislike</th>
-                        <th>Slightly Dislike</th>
-                        <th>Neutral</th>
-                        <th>Slightly Enjoy</th>
-                        <th>Enjoy</th>
-                    </tr>
-                </thead>
-                <tbody id="survey-body">
-                    <!-- Questions will be dynamically inserted here by script.js -->
-                </tbody>
-            </table>
+            <!-- The survey table is replaced by a div that will hold question cards -->
+            <div id="survey-body">
+                <!-- Questions will be dynamically inserted here by script.js -->
+            </div>
         </form>
         <div id="survey-navigation">
             <button id="nav-back">Back</button>
@@ -43,14 +32,23 @@
         </div>
     </div>
 
-    <div id="results"></div>
+    <div id="results">
+        <div class="loader-container hidden">
+            <div class="loader"></div>
+            <h2>Calculating Results...</h2>
+        </div>
+    </div>
 
-    <div id="chat-container" class="hidden">
+    <div id="chat-container" class="hidden" style="display: none;">
         <div id="chat-header">
             <h2>Chat with Your Career Advisor</h2>
         </div>
         <div id="chat-messages"></div>
+        <div id="suggested-questions-container">
+            <!-- Suggested questions will be inserted here by script.js -->
+        </div>
         <div id="chat-form-container">
+            <p class="chat-disclaimer">Please avoid sharing sensitive personal information. Conversations may be reviewed for service improvement.</p>
             <form id="chat-form">
                 <textarea id="chat-input" placeholder="Ask a follow-up, e.g., 'Which of these is less stressful?'"
                     rows="1"></textarea>

@@ -31,7 +31,7 @@ def recommend():
     similarity_scores = cosine_similarity(user_vector, job_scores.values)
     df_clustered_jobs["similarity"] = similarity_scores[0]
 
-    top_jobs = df_clustered_jobs.sort_values(by="similarity", ascending=False).head(15)
+    top_jobs = df_clustered_jobs.sort_values(by="similarity", ascending=False).head(20)
 
     recommendations = []
     for index, row in top_jobs.iterrows():
