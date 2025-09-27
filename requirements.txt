@@ -1,5 +1,6 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch
+pysqlite3-binary
 chromadb==1.1.0
 Flask==3.1.2
 gunicorn==23.0.0
