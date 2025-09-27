@@ -22,25 +22,26 @@ def get_ai_response(
     # Retrieve relevant documents from the vector database
     try:
         query_vector = embedding_model.encode([user_question]).tolist()[0]
-        results = onet_collection.query(
-            query_embeddings=[query_vector],
-            n_results=5,
-            include=["documents", "metadatas"],
+        search_results = (
+            onet_collection.search(query_vector, vector_column_name="embedding")
+            .metric("cosine")
+            .limit(5)
+            .to_pandas()
         )
 
-        docs = results.get("documents", [[]])[0]
-        metas = results.get("metadatas", [[]])[0]
+        if search_results.empty:
+            raise ValueError("No matching documents found.")
+
         retrieved_chunks = []
-        for doc, meta in zip(docs, metas):
-            title = meta.get("title", "Untitled")
-            retrieved_chunks.append(f"{title}: {doc}")
+        for _, row in search_results.iterrows():
+            title = row.get("title", "Untitled")
+            content = row.get("content", "")
+            retrieved_chunks.append(f"{title}: {content}")
 
         retrieved_docs = "\n\n---\n\n".join(retrieved_chunks)
     except Exception as e:
-        print(f"ChromaDB search error: {e}")
-        raise ValueError(
-            "Could not retrieve relevant documents from the knowledge base."
-        )
+        print(f"LanceDB search error: {e}")
+        raise ValueError("Could not retrieve relevant documents from the knowledge base.")
 
     # Create system and user prompts for the LLM
     system_prompt = (

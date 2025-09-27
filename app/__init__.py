@@ -2,7 +2,7 @@ from flask import Flask
 from .config import Config
 from .data_processing import load_and_prepare_data
 import openai
-import chromadb
+import lancedb
 from sentence_transformers import SentenceTransformer
 
 
@@ -42,20 +42,32 @@ def create_app(config_class=Config):
 
         # Initialize RAG components
         try:
-            chroma_path = app.config["VECTOR_DB_PATH"]
-            app.chroma_client = chromadb.PersistentClient(path=str(chroma_path))
-            print("DEBUG: ChromaDB connection established.")
+            vector_path = (
+                app.config.get("VECTOR_DB_PATH")
+                or app.config.get("LANCE_DB_PATH")
+            )
+            if not vector_path:
+                raise ValueError("VECTOR_DB_PATH is not configured.")
+
+            app.lancedb_client = lancedb.connect(str(vector_path))
+            print(f"DEBUG: LanceDB connection established at '{vector_path}'.")
 
             app.embedding_model = SentenceTransformer(app.config["EMBEDDING_MODEL_NAME"])
             print(f"DEBUG: Embedding model '{app.config['EMBEDDING_MODEL_NAME']}' loaded.")
 
-            app.onet_collection = app.chroma_client.get_collection(app.config["ONET_COLLECTION_NAME"])
-            print(f"DEBUG: Collection '{app.config['ONET_COLLECTION_NAME']}' loaded successfully.")
+            table_name = app.config["ONET_COLLECTION_NAME"]
+            if table_name not in app.lancedb_client.table_names():
+                raise ValueError(f"Table '{table_name}' not found in LanceDB store.")
+
+            app.onet_collection = app.lancedb_client.open_table(table_name)
+            app.vector_store = app.lancedb_client
+            print(f"DEBUG: Table '{table_name}' loaded successfully from LanceDB.")
 
         except Exception as e:
             print(f"CRITICAL RAG INIT ERROR: RAG components could not be fully initialized. ERROR: {e}")
             app.onet_collection = None
-            app.chroma_client = None
+            app.lancedb_client = None
+            app.vector_store = None
 
     # Register routes
     from . import routes

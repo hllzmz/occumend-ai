@@ -24,7 +24,7 @@ class Config:
 
     # Data and chromadb directories 
     DATA_PATH = BASE_DIR / "data"
-    VECTOR_DB_PATH = BASE_DIR / "data" / "chroma_db"
+    VECTOR_DB_PATH = BASE_DIR / "data" / "lancedb_store"
 
     ONET_COLLECTION_NAME = "onet_data"
 
