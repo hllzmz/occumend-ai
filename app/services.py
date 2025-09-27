@@ -81,6 +81,8 @@ def get_ai_response(
             ],
             temperature=0.7,
             max_tokens=2000,
+            presence_penalty=0.6,
+            frequency_penalty=0.5,
         )
         answer = response.choices[0].message.content
         return answer
