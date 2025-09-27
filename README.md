@@ -16,7 +16,6 @@ The occupational information provided by ONET (e.g., Abilities, Skills, Tasks, e
 Clone repo
 ```bash
 git clone https://github.com/hllzmz/occumend-ai.git
-cd occumend-ai
 ```
 Change to project directory
 ```bash
