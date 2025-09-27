@@ -1,11 +1,13 @@
-def get_ai_response(llm_client, onet_collection, user_question, profile_summary, model, embedding_model):
+def get_ai_response(
+    llm_client, onet_collection, user_question, profile_summary, model, embedding_model
+):
     """
     Retrieves relevant documents from the database based on the user's question,
     creates a prompt, and asks the LLM to generate an answer.
 
     Args:
         llm_client: Initialized OpenAI client.
-        onet_collection: Initialized Milvus Collection.
+        onet_collection: Initialized ChromaDB Collection.
         user_question (str): The user's question.
         profile_summary (str): The user's RIASEC profile summary.
         model (str): Name of the LLM model to use.
@@ -20,13 +22,25 @@ def get_ai_response(llm_client, onet_collection, user_question, profile_summary,
     # Retrieve relevant documents from the vector database
     try:
         query_vector = embedding_model.encode([user_question]).tolist()[0]
-        search_params = {"metric_type": "COSINE", "params": {}}
-        results = onet_collection.search([query_vector], "vector", search_params, limit=5, output_fields=["title"])
-        # Combine results
-        retrieved_docs = "\n\n---\n\n".join([hit.entity.get("title") + ": " + "Document content here" for hit in results[0]])  # Not: İçerik saklanmıyor, gerekirse ekleyin
+        results = onet_collection.query(
+            query_embeddings=[query_vector],
+            n_results=5,
+            include=["documents", "metadatas"],
+        )
+
+        docs = results.get("documents", [[]])[0]
+        metas = results.get("metadatas", [[]])[0]
+        retrieved_chunks = []
+        for doc, meta in zip(docs, metas):
+            title = meta.get("title", "Untitled")
+            retrieved_chunks.append(f"{title}: {doc}")
+
+        retrieved_docs = "\n\n---\n\n".join(retrieved_chunks)
     except Exception as e:
-        print(f"Milvus search error: {e}")
-        raise ValueError("Could not retrieve relevant documents from the knowledge base.")
+        print(f"ChromaDB search error: {e}")
+        raise ValueError(
+            "Could not retrieve relevant documents from the knowledge base."
+        )
 
     # Create system and user prompts for the LLM
     system_prompt = (

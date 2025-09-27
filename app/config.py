@@ -24,7 +24,7 @@ class Config:
 
     # Data and chromadb directories 
     DATA_PATH = BASE_DIR / "data"
-    MILVUS_DB_PATH = BASE_DIR / "data" / "milvus.db"
+    VECTOR_DB_PATH = BASE_DIR / "data" / "chroma_db"
 
     ONET_COLLECTION_NAME = "onet_data"
 

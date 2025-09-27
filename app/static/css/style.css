@@ -4,8 +4,8 @@ body {
     margin: 40px auto;
     padding: 0 20px;
     line-height: 1.6;
-    background-color: #f8f9fa; /* Softer background */
-    color: #212529; /* Darker, softer text */
+    background-color: #f8f9fa;
+    color: #212529;
 }
 
 h1,
@@ -16,7 +16,7 @@ h3 {
 }
 
 h1 {
-    border-bottom: 2px solid #007bff; /* New primary color */
+    border-bottom: 2px solid #007bff;
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
@@ -28,7 +28,7 @@ h2 {
 }
 
 button {
-    background-color: #007bff; /* New primary color */
+    background-color: #007bff;
     color: white;
     padding: 12px 20px;
     border: none;
@@ -39,7 +39,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3; /* Darker shade for hover */
+    background-color: #0056b3;
 }
 
 button:disabled {
@@ -66,7 +66,6 @@ button:disabled {
     opacity: 0;
 }
 
-/* New Survey Card Styles */
 .survey-question-card {
     background-color: #fff;
     border: 1px solid #dee2e6;
@@ -108,9 +107,8 @@ button:disabled {
     transition: background-color 0.2s ease-in-out;
 }
 
-/* Style for selected option */
 .survey-option.selected {
-    background-color: #e7f3ff; /* Light blue for selected */
+    background-color: #e7f3ff;
 }
 
 .survey-option input[type="radio"] {
@@ -133,13 +131,29 @@ button:disabled {
     box-shadow: 0 0 8px rgba(217, 83, 79, 0.5);
 }
 
-/* New, more harmonious color palette for categories */
-.cat-r { border-left: 5px solid #63bce4; }
-.cat-i { border-left: 5px solid #62d4a4; }
-.cat-a { border-left: 5px solid #f9c26b; }
-.cat-s { border-left: 5px solid #f48c7c; }
-.cat-e { border-left: 5px solid #d192e8; }
-.cat-c { border-left: 5px solid #9ea9b3; }
+.cat-r {
+    border-left: 5px solid #63bce4;
+}
+
+.cat-i {
+    border-left: 5px solid #62d4a4;
+}
+
+.cat-a {
+    border-left: 5px solid #f9c26b;
+}
+
+.cat-s {
+    border-left: 5px solid #f48c7c;
+}
+
+.cat-e {
+    border-left: 5px solid #d192e8;
+}
+
+.cat-c {
+    border-left: 5px solid #9ea9b3;
+}
 
 
 #survey-navigation {
@@ -177,7 +191,7 @@ button:disabled {
 #progress-bar {
     width: 0%;
     height: 20px;
-    background-color: #007bff; /* New primary color */
+    background-color: #007bff;
     border-radius: 5px;
     text-align: center;
     line-height: 20px;
@@ -234,7 +248,6 @@ button:disabled {
     vertical-align: middle;
 }
 
-/* New styles for the visual similarity bar */
 .similarity-bar-container {
     width: 100%;
     height: 24px;
@@ -243,12 +256,12 @@ button:disabled {
     position: relative;
     display: flex;
     align-items: center;
-    overflow: hidden; /* Ensures inner bar respects the radius */
+    overflow: hidden;
 }
 
 .similarity-bar {
     height: 100%;
-    background-color: #28a745; /* A nice green for similarity */
+    background-color: #28a745;
     border-radius: 4px 0 0 4px;
     transition: width 0.5s ease-in-out;
 }
@@ -258,7 +271,7 @@ button:disabled {
     left: 10px;
     color: white;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .similarity-percentage {
@@ -271,24 +284,23 @@ button:disabled {
 }
 
 .details-btn {
-    background-color: #6c757d; /* Consistent secondary button color */
+    background-color: #6c757d;
     color: white;
     font-size: 12px;
     padding: 5px 10px;
     border-radius: 4px;
-    transition: background-color 0.2s; /* Add transition */
+    transition: background-color 0.2s;
 }
 
 .details-btn:hover {
-    background-color: #5a6268; /* Consistent hover color */
+    background-color: #5a6268;
 }
 
-.details-row > td {
+.details-row>td {
     padding: 0 !important;
-    border: 0; /* Remove border when row is open */
+    border: 0;
 }
 
-/* Smooth transition for details row */
 .details-content {
     background-color: #f8f9fa;
     padding: 20px;
@@ -296,7 +308,7 @@ button:disabled {
     gap: 20px;
     flex-wrap: wrap;
     overflow: hidden;
-    max-height: 1000px; /* Large enough value */
+    max-height: 1000px;
     transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
 }
 
@@ -327,7 +339,6 @@ button:disabled {
     display: none;
 }
 
-/* Override .hidden for the details row to allow animation */
 .details-row.hidden {
     display: table-row;
 }
@@ -366,12 +377,12 @@ button:disabled {
     gap: 12px;
 }
 
-/* Animation for new chat messages */
 @keyframes slideInUp {
     from {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -384,11 +395,11 @@ button:disabled {
     max-width: 85%;
     line-height: 1.5;
     word-wrap: break-word;
-    animation: slideInUp 0.4s ease-out; /* Apply animation */
+    animation: slideInUp 0.4s ease-out;
 }
 
 .user-message {
-    background-color: #007bff; /* New primary color */
+    background-color: #007bff;
     color: white;
     align-self: flex-end;
     border-bottom-right-radius: 5px;
@@ -465,7 +476,6 @@ button:disabled {
     align-self: center;
 }
 
-/* Loader Animation */
 .loader-container {
     display: flex;
     flex-direction: column;
@@ -473,6 +483,7 @@ button:disabled {
     justify-content: center;
     padding: 40px;
 }
+
 .loader {
     border: 6px solid #e9ecef;
     border-top: 6px solid #007bff;
@@ -482,9 +493,15 @@ button:disabled {
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
 }
+
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 
@@ -521,14 +538,14 @@ button:disabled {
 
     .survey-options {
         width: 100%;
-        justify-content: space-between; /* Better alignment */
-        flex-wrap: wrap; /* Allow options to wrap */
-        gap: 10px; /* Reduce gap */
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     .survey-option {
-        min-width: 0; /* Remove min-width to allow natural flex sizing */
-        flex-basis: 0; /* Allow items to shrink and grow properly */
+        min-width: 0;
+        flex-basis: 0;
         flex-grow: 1;
     }
 
@@ -543,14 +560,17 @@ button:disabled {
     }
 
     .chart-block {
-        max-width: 100%; /* Allow charts to take full width */
+        max-width: 100%;
     }
 
     .results-table thead {
         display: none;
     }
-    
-    .results-table, .results-table tbody, .results-table tr, .results-table td {
+
+    .results-table,
+    .results-table tbody,
+    .results-table tr,
+    .results-table td {
         display: block;
         width: 100%;
     }
@@ -560,7 +580,7 @@ button:disabled {
         border: 1px solid #dee2e6;
         border-radius: 5px;
         padding: 10px;
-        box-sizing: border-box; /* Ensure padding is included in width */
+        box-sizing: border-box;
     }
 
     .results-table .result-row {
@@ -568,24 +588,24 @@ button:disabled {
     }
 
     .results-table td {
-        display: block; /* Change back to block for natural flow */
+        display: block;
         padding: 10px 5px;
         border: none;
         border-bottom: 1px solid #e9ecef;
-        text-align: left; /* Align text to the left */
+        text-align: left;
     }
 
     .results-table td[data-label="Occupation"],
     .results-table td[data-label="Career Cluster"] {
-        text-align: right; /* Keep the actual text content to the right */
+        text-align: right;
     }
 
     .results-table tr td:last-child {
         border-bottom: none;
     }
-    
+
     .results-table td[data-label="Details"] {
-        text-align: center; /* Center the details button */
+        text-align: center;
         padding-top: 15px;
     }
 
@@ -593,23 +613,23 @@ button:disabled {
         content: attr(data-label);
         font-weight: bold;
         text-align: left;
-        display: block; /* Make label take its own line */
-        margin-bottom: 5px; /* Add space below label */
+        display: block;
+        margin-bottom: 5px;
     }
 
     .results-table td[data-label="Similarity"] {
-        text-align: left; /* Override right alignment for this cell */
+        text-align: left;
     }
 
     .results-table td[data-label="Similarity"]::before {
-        margin-bottom: 8px; /* More space for the bar */
+        margin-bottom: 8px;
     }
 
     .results-table td[data-label="Similarity"] .similarity-row {
         display: flex;
         align-items: center;
         gap: 8px;
-        width: 100%; /* Ensure it takes full width of the td */
+        width: 100%;
     }
 
     .results-table td[data-label="Similarity"] .similarity-bar-container {
@@ -646,10 +666,9 @@ button:disabled {
 
     #chat-container {
         margin-top: 30px;
-        /* The chat will be part of the normal page flow */
     }
 
     #chat-messages {
-        max-height: 45vh; /* Reduce max height on mobile */
+        max-height: 45vh;
     }
 }

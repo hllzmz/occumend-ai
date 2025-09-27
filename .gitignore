@@ -11,11 +11,12 @@ env/
 .env
 
 # Database files
-#*.db
+*.db
 #/data
 *.xlsx
 *.csv
 #*.parquet
+chroma_db
 
 # IDE and OS specific files
 .idea/
@@ -34,3 +35,4 @@ temp/
 .pytest_cache/
 .python-version
 
+.github/copilot-instructions.md

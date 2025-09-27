@@ -22,6 +22,32 @@ def clean_text(text):
     return text.strip()
 
 
+def chunk_text(text, max_words=200, overlap=40):
+    """Split text into overlapping chunks for retrieval."""
+    if not isinstance(text, str) or not text.strip():
+        return []
+    words = text.split()
+    if not words:
+        return []
+
+    chunks = []
+    start = 0
+    total_words = len(words)
+
+    while start < total_words:
+        end = min(start + max_words, total_words)
+        chunk = " ".join(words[start:end]).strip()
+        if chunk:
+            chunks.append(chunk)
+
+        if end >= total_words:
+            break
+
+        next_start = max(end - overlap, start + 1)
+        start = next_start
+    return chunks
+
+
 def build_knowledge_base():
     """
     Read data from O*NET files, create a combined text document per occupation,
@@ -81,13 +107,18 @@ def build_knowledge_base():
             f"Work Environment and Context includes: {work_context}"
         )
 
-        knowledge_base.append(
-            {
-                "doc_id": code,
-                "title": title,
-                "content": combined_text,
-            }
-        )
+        chunks = chunk_text(combined_text, max_words=200, overlap=50)
+        if not chunks:
+            chunks = [combined_text]
+
+        for idx, chunk in enumerate(chunks, start=1):
+            knowledge_base.append(
+                {
+                    "doc_id": f"{code}#{idx}",
+                    "title": f"{title} (Chunk {idx})",
+                    "content": chunk,
+                }
+            )
 
     output_filename = DATA_DIR / "onet_knowledge_base.json"
     with open(output_filename, "w", encoding="utf-8") as f:

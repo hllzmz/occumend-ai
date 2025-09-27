@@ -2,7 +2,7 @@ from flask import Flask
 from .config import Config
 from .data_processing import load_and_prepare_data
 import openai
-from pymilvus import connections, Collection, CollectionSchema
+import chromadb
 from sentence_transformers import SentenceTransformer
 
 
@@ -42,22 +42,20 @@ def create_app(config_class=Config):
 
         # Initialize RAG components
         try:
-            # Milvus Connection
-            connections.connect(uri=str(app.config["MILVUS_DB_PATH"]))
-            print("DEBUG: Milvus connection established.")
+            chroma_path = app.config["VECTOR_DB_PATH"]
+            app.chroma_client = chromadb.PersistentClient(path=str(chroma_path))
+            print("DEBUG: ChromaDB connection established.")
 
-            # Loading the embedding model
             app.embedding_model = SentenceTransformer(app.config["EMBEDDING_MODEL_NAME"])
             print(f"DEBUG: Embedding model '{app.config['EMBEDDING_MODEL_NAME']}' loaded.")
 
-            # Loading Milvus Collection
-            app.onet_collection = Collection(app.config["ONET_COLLECTION_NAME"])
-            app.onet_collection.load()
+            app.onet_collection = app.chroma_client.get_collection(app.config["ONET_COLLECTION_NAME"])
             print(f"DEBUG: Collection '{app.config['ONET_COLLECTION_NAME']}' loaded successfully.")
 
         except Exception as e:
             print(f"CRITICAL RAG INIT ERROR: RAG components could not be fully initialized. ERROR: {e}")
             app.onet_collection = None
+            app.chroma_client = None
 
     # Register routes
     from . import routes

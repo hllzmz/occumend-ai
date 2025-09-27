@@ -40,7 +40,7 @@ function renderStep(stepIndex) {
             optionsHTML += `
                 <label class="survey-option ${isSelected}">
                     <input type="radio" name="q${qIndex}" value="${i}" data-q-index="${qIndex}" ${isChecked ? 'checked' : ''}>
-                    <span class="option-label">${optionLabels[i-1]}</span>
+                    <span class="option-label">${optionLabels[i - 1]}</span>
                 </label>
             `;
         }
@@ -122,7 +122,7 @@ function fadeTransition(updateFunction, ...args) {
                 firstInput.focus();
             }
             formContainer.classList.remove('fade-out');
-            
+
             // Re-enable buttons after transition
             nextBtn.disabled = false;
             backBtn.disabled = false;
@@ -139,7 +139,7 @@ async function submitAndShowResults() {
     setTimeout(() => {
         formContainer.style.display = 'none';
         loaderContainer = document.querySelector('.loader-container');
-        if(loaderContainer) loaderContainer.classList.remove('hidden');
+        if (loaderContainer) loaderContainer.classList.remove('hidden');
         resultsContainer.classList.add('visible');
     }, 400);
 
@@ -166,7 +166,7 @@ async function submitAndShowResults() {
         renderResults(data, answersForBackend);
 
     } catch (error) {
-        if(loaderContainer) loaderContainer.classList.add('hidden');
+        if (loaderContainer) loaderContainer.classList.add('hidden');
         resultsContainer.innerHTML = '<h2>An error occurred. Please try again.</h2>';
         console.error('Detailed Error:', error);
     }
@@ -208,10 +208,11 @@ function renderResults(data, answersForBackend) {
             <tr class="result-row">
                 <td data-label="Occupation">${rec.Title}</td>
                 <td data-label="Career Cluster">${rec.cluster_name}</td>
-                <td data-label="Similarity">
+                 <td data-label="Similarity">
                     <div class="similarity-row">
                         <div class="similarity-bar-container" title="Similarity: ${similarityPercentage}%">
                             <div class="similarity-bar" style="width: ${similarityPercentage}%;"></div>
+                            <span>${similarityPercentage}%</span>
                         </div>
                         <div class="similarity-percentage">${similarityPercentage}%</div>
                     </div>
@@ -228,14 +229,13 @@ function renderResults(data, answersForBackend) {
     });
     resultsHtml += '</tbody></table>';
 
-    // Hide loader and show results
     const loaderContainer = document.querySelector('.loader-container');
     if (loaderContainer) loaderContainer.classList.add('hidden');
 
     resultsContainer.innerHTML = resultsHtml;
     const chatContainer = document.getElementById('chat-container');
     if (chatContainer) {
-        chatContainer.style.display = 'block'; // Make it visible
+        chatContainer.style.display = 'block';
         chatContainer.classList.remove('hidden');
     }
     addChatMessage("Hello! I'm your AI career advisor OccumendAI. Feel free to ask me anything about your results or the recommended jobs.", "bot-message");
@@ -244,11 +244,11 @@ function renderResults(data, answersForBackend) {
 
 function renderSuggestedQuestions() {
     const container = document.getElementById('suggested-questions-container');
-    container.innerHTML = ''; // Clear previous suggestions
+    container.innerHTML = '';
     const suggestions = [
         "What are the daily tasks for a " + recommendationsData[0].Title + "?",
-        "Which of these jobs has the best work-life balance?",
-        "Compare the required education for the top 3 jobs."
+        "What skills do I need for a career in " + recommendationsData[1].Title + "?",
+        "Tell me about my job interests profile.",
     ];
 
     suggestions.forEach(q => {
@@ -298,11 +298,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const qIndex = event.target.getAttribute('data-q-index');
             userAnswers[qIndex] = event.target.value;
 
-            // Visual feedback for selection
             const currentCard = document.getElementById(`q-card-${qIndex}`);
-            // Remove 'selected' from all options in the same card
             currentCard.querySelectorAll('.survey-option').forEach(opt => opt.classList.remove('selected'));
-            // Add 'selected' to the parent label of the checked radio
             event.target.closest('.survey-option').classList.add('selected');
 
             if (currentCard.classList.contains('question-error')) {
@@ -344,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         this.style.height = (this.scrollHeight) + 'px';
     });
 
-    chatInput.addEventListener('keydown', function(event) {
+    chatInput.addEventListener('keydown', function (event) {
         // Check if Enter is pressed without the Shift key
         if (event.key === 'Enter' && !event.shiftKey) {
             // Prevent default action (which is to add a new line)
