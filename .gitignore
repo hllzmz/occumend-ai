@@ -11,12 +11,12 @@ env/
 .env
 
 # Database files
-*.db
+#*.db
 #/data
 *.xlsx
 *.csv
 #*.parquet
-chroma_db
+#chroma_db
 
 # IDE and OS specific files
 .idea/
