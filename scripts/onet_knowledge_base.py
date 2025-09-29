@@ -11,8 +11,6 @@ OCCUPATIONS_FILE_PATH = DATA_DIR / "occupations.xlsx"
 TASKS_STATEMENTS_FILE_PATH = DATA_DIR / "task_statements.xlsx"
 WORK_CONTEXT_FILE_PATH = DATA_DIR / "work_context.xlsx"
 
-datafromdb = pd.read_excel(WORK_CONTEXT_FILE_PATH)
-
 
 def clean_text(text):
     """Clean special characters (basic) and extra whitespace in the text."""
