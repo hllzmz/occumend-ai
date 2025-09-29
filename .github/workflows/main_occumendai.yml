@@ -12,6 +12,7 @@ on:
       - 'README.md'
       - '.github/workflows/**'
       - 'LICENSE'
+      - 'scripts/**'
   workflow_dispatch:
 
 jobs:
