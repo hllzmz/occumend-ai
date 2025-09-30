@@ -1,3 +1,5 @@
+<img width="1017" height="450" alt="banner-oai" src="https://github.com/user-attachments/assets/bf1c202d-7538-40ee-8fe1-1abdef488d72" />
+
 # OccumendAI
 An AI-based career recommendation engine as a Flask web application.
 
