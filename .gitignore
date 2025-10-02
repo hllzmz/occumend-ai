@@ -36,4 +36,3 @@ temp/
 .python-version
 
 .github/copilot-instructions.md
-docker-compose-build.yml
