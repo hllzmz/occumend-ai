@@ -1,3 +1,5 @@
+<img width="1017" height="450" alt="banner-oai" src="https://github.com/user-attachments/assets/bf1c202d-7538-40ee-8fe1-1abdef488d72" />
+
 # OccumendAI
 An AI-based career recommendation engine as a Flask web application.
 
@@ -5,12 +7,13 @@ An AI-based career recommendation engine as a Flask web application.
 ## How it works?
 OccumenadAI is a career recommender.  Using various occupational information and characteristics from the ONET® 30.0 Database, it provides career advice. 
 
+[To have a detailed look at the development process ](https://medium.com/@halil.uzmez/occumendai-building-an-ai-powered-career-recommendation-engine-from-scratch-f62f51f16f17)
+
 ### Stage 1: Survey and Recommendations
 First, the user completes the RIASEC (Holland Code Test) scale, and a user profile is generated. Occupational interests provided by ONET are clustered using KMeans to determine real-world occupational interest clusters (8 in total). The user profile is compared to the O*NET occupational profile using cosine similarity, and a similarity score is calculated. Occupational recommendations are made based on the similarity score and presented to the user along with the occupational interest clusters to which the occupations belong.
 
 ### Stage 2: RAG and Chat
 The occupational information provided by ONET (e.g., Abilities, Skills, Tasks, etc.) has been exported to a JSON file in the format “doc_id, title, content”. The JSON file, referred to as the “ONET knowledge base”, has been converted into embeddings using sentence transformers in chunks. The user profile and knowledge base created with the scale are fed into the LLM to create a RAG implementation that enables the user to chat about recommendations and occupational information.
-
 
 ## Run Locally
 Clone repo
