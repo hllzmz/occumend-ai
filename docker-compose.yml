@@ -1,6 +1,9 @@
 services:
   occumendai-app:
-    image: haliluzmez/occumendai:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: occumendai:v1
     ports:
       - "5000:5000"
     env_file:
