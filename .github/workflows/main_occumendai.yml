@@ -17,6 +17,7 @@ on:
       - '.dockerignore'
       - 'Dockerfile'
       - 'docker-compose.yml'
+      - '.env.example'
   workflow_dispatch:
 
 jobs:
