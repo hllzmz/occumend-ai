@@ -79,7 +79,7 @@ def chat():
         )
         return jsonify({"answer": answer})
     except ValueError as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "An unexpected server error occurred."}), 500
     except Exception as e:
         current_app.logger.error(f"Unexpected error occurred in /chat: {e}")
         return jsonify({"error": "An unexpected server error occurred."}), 500
