@@ -8,7 +8,11 @@ from .services import get_ai_response
 bp = Blueprint('main', __name__)
 
 @bp.route("/")
-def index():
+def landing():
+    return render_template("landing.html")
+
+@bp.route("/survey")
+def survey():
     return render_template("index.html")
 
 @bp.route("/recommend", methods=["POST"])
