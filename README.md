@@ -5,7 +5,7 @@ An AI-based career recommendation engine as a Flask web application.
 
 [Go to site](https://occumendai-d0f6abgrcwagagbp.germanywestcentral-01.azurewebsites.net) 
 ## How it works?
-OccumenadAI is a career recommender.  Using various occupational information and characteristics from the ONET® 30.0 Database, it provides career advice. 
+OccumendAI is a career recommender.  Using various occupational information and characteristics from the ONET® 30.0 Database, it provides career advice. 
 
 [To have a detailed look at the development process ](https://medium.com/@halil.uzmez/occumendai-building-an-ai-powered-career-recommendation-engine-from-scratch-f62f51f16f17)
 
