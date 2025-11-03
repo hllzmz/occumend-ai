@@ -7,7 +7,7 @@ def get_ai_response(
 
     Args:
         llm_client: Initialized OpenAI client.
-        onet_collection: Initialized ChromaDB Collection.
+        onet_collection: Initialized LanceDB Collection.
         user_question (str): The user's question.
         profile_summary (str): The user's RIASEC profile summary.
         model (str): Name of the LLM model to use.
